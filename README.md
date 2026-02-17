@@ -1,6 +1,6 @@
 # 鳩世話LINE通知システム 🕊️ (v3.0 - Flex Calendar対応版)
 
-九大マジックサークルでの鳩世話当番を自動化し、LINEグループに月間カレンダーを共有するシステムです。
+九大マジックサークルでの鳩世話当番を自動化し、LINEグループに月間カレンダーを共有するためのシステムです。
 Google Apps Script (GAS) を基盤とし、LINE Messaging APIと連携しています。
 
 ---
@@ -10,23 +10,51 @@ Google Apps Script (GAS) を基盤とし、LINE Messaging APIと連携してい�
 このシステムは Google Apps Script (GAS) のコンテナバインドスクリプトとして動作しています。
 
 ### 1. 技術構成
-- **Runtime**: Google Apps Script (V8)
-- **External API**: LINE Messaging API
-- **Database/UI**: Google Sheets (名簿・当番管理)
-- **UI Component**: LINE Flex Message (Grid Calendar)
+- Runtime: Google Apps Script (V8)
+- External API: LINE Messaging API
+- Database/UI: Google Sheets (名簿・当番管理)
+- UI Component: LINE Flex Message (Grid Calendar形式)
 
 ### 2. 環境変数（スクリプトプロパティ）
 GASの「プロジェクトの設定 > スクリプトプロパティ」に以下の値を必ず設定してください。
-- `LINE_ACCESS_TOKEN`: LINE Developers発行のチャネルアクセストークン
-- `LINE_GROUP_ID`: 鳩世話用LINEグループのID（Gから始まる文字列）
+- LINE_ACCESS_TOKEN: LINE Developers発行のチャネルアクセストークン
+- LINE_GROUP_ID: 鳩世話用LINEグループのID（Gから始まる文字列）
 
 ### 3. デプロイとWebhook
-コードを修正した際は、必ず **「デプロイの管理」 > 「編集」 > 「新バージョン」** でデプロイを更新してください。
-発行された「ウェブアプリURL」が、LINE Developersの「Webhook URL」に設定されている必要があります。
+コードを修正した際は、必ず「デプロイの管理」 > 「編集」 > 「新バージョン」でデプロイを更新してください。
+発行された最新の「ウェブアプリURL」が、LINE Developersの「Webhook URL」に設定されている必要があります。
 
 ### 4. Git管理 (clasp)
-```bash
-# クローン
-clasp clone "あなたのスクリプトID"
-# 変更の反映
-clasp push
+claspを使用する場合の基本コマンド：
+- クローン: clasp clone "あなたのスクリプトID"
+- 変更の反映: clasp push
+※ .clasprc.json は個人認証情報を含むため、Gitのリポジトリ（GitHub等）には絶対に含めないでください。
+
+---
+
+## 📅 鳩世話リーダー向けガイド（運用・操作）
+
+日常の運用はスプレッドシートの入力とボタン操作のみで完結します。
+
+### 1. 新メンバーの登録
+1. LINE公式アカウントのQRコード等を伝えて、友達追加してもらいます。
+2. LINEのリッチメニューから「名前登録」ボタンを押し、マジシャンズネームを送信してもらいます。
+3. 自動的にスプレッドシートの「名簿」シートへ登録されます。
+
+### 2. 当番表の作成
+1. 「当番表」シートに日付を入力します。
+2. 「当番名」のセルをダブルクリックし、プルダウンリストから担当者を選択します。
+    - 注意: マジシャンズネームが長すぎる（全角4文字以上）と、カレンダー表示で文字が切れる場合があります。短い愛称での登録を推奨します。
+
+### 3. LINEグループへのカレンダー送信
+1. 「当番表」シート内にある「LINEに共有」ボタンを押してください。
+2. LINEグループに、マス目状の月間カレンダー（Flex Message）が送信されます。
+    - ※ボタンを押した日の「月」のデータが自動的に抽出されて送信されます。
+
+### 4. 毎日の個別リマインド
+- 毎日正午（12:00頃）に、システムが「当番表」を自動チェックします。
+- その日の当番担当者へ、LINEで直接リマインド通知が届きます。リーダーが手動で送る必要はありません。
+
+### ⚠️ トラブルシューティング
+- グループに届かない: スクリプトプロパティの LINE_GROUP_ID が正しいか、Botがグループに参加しているかを確認してください。
+- 通知が来ない: スプレッドシートの「日付」が正しく入力されているか、および「名簿」の名前と「当番名」が一致しているか確認してください。
