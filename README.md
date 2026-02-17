@@ -1,6 +1,6 @@
-# 鳩世話LINE通知システム 🕊️
+# 鳩世話LINE通知システム 🕊️ (v3.0 - Flex Calendar対応版)
 
-九大マジックサークルでの鳩世話当番を自動化し、リマインドを送信するためのシステムです。
+九大マジックサークルでの鳩世話当番を自動化し、LINEグループに月間カレンダーを共有するシステムです。
 Google Apps Script (GAS) を基盤とし、LINE Messaging APIと連携しています。
 
 ---
@@ -10,49 +10,23 @@ Google Apps Script (GAS) を基盤とし、LINE Messaging APIと連携してい�
 このシステムは Google Apps Script (GAS) のコンテナバインドスクリプトとして動作しています。
 
 ### 1. 技術構成
-- Runtime: Google Apps Script
-- External API: LINE Messaging API
-- Database/UI: Google Sheets (名簿・当番管理), Google Calendar (通知トリガー)
-- Local Dev: clasp (推奨)
+- **Runtime**: Google Apps Script (V8)
+- **External API**: LINE Messaging API
+- **Database/UI**: Google Sheets (名簿・当番管理)
+- **UI Component**: LINE Flex Message (Grid Calendar)
 
 ### 2. 環境変数（スクリプトプロパティ）
-GASの「プロジェクトの設定 > スクリプトプロパティ」に以下の値を設定して運用してください。
-- LINE_ACCESS_TOKEN: LINE Developers発行のチャネルアクセストークン
-- CALENDAR_ID: 鳩世話専用GoogleカレンダーのID（xxx@group.calendar.google.com）
+GASの「プロジェクトの設定 > スクリプトプロパティ」に以下の値を必ず設定してください。
+- `LINE_ACCESS_TOKEN`: LINE Developers発行のチャネルアクセストークン
+- `LINE_GROUP_ID`: 鳩世話用LINEグループのID（Gから始まる文字列）
 
 ### 3. デプロイとWebhook
-コードを修正した際は、必ず「デプロイの管理」から新バージョンを発行してください。
-発行された「ウェブアプリURL」が、LINE Developersの「Webhook URL」と一致している必要があります。
+コードを修正した際は、必ず **「デプロイの管理」 > 「編集」 > 「新バージョン」** でデプロイを更新してください。
+発行された「ウェブアプリURL」が、LINE Developersの「Webhook URL」に設定されている必要があります。
 
 ### 4. Git管理 (clasp)
-- クローン: clasp clone "あなたのスクリプトID"
-- 変更の反映: clasp push
-- 注意：.clasprc.json は認証情報を含むため .gitignore に追加すること
-
----
-
-## 📅 鳩世話リーダー向けガイド（運用・操作）
-
-日常の運用はスプレッドシートの入力とボタン操作のみで完結します。
-
-### 1. 新入生・新メンバーの登録
-1. LINE公式アカウントを友達追加してもらいます。
-2. LINEのリッチメニューから「名前登録」ボタンを押すよう指示してください。
-3. メンバーがマジシャンズネームを送信すると、自動的に「名簿」シートへ登録されます。
-
-### 2. 当番表の作成
-1. 「当番表」シートに日付を入力します。
-2. 「当番名」のセルをダブルクリックし、プルダウンリストから名前を選択してください。
-   - ※「名簿」に登録されていない名前は選べません。
-
-### 3. カレンダーへの同期
-1. 当番表の入力が完了したら、シート内の「カレンダーに反映」ボタンを1回押してください。
-2. Googleカレンダーに「鳩当番：〇〇」という予定が自動作成されます。
-
-### 4. 当日の自動通知
-- 毎日正午（12:00〜13:00頃）に、その日の当番のLINEへ自動的にリマインドが届きます。
-- リーダーが手動で通知を送る必要はありません。
-
-### ⚠️ トラブルシューティング
-- 通知が届かない: カレンダーの予定名が「鳩当番：〇〇」の形式になっているか確認してください。
-- 名前が出ない: 「名簿」シートに正しくマジシャンズネームが登録されているか確認してください。
+```bash
+# クローン
+clasp clone "あなたのスクリプトID"
+# 変更の反映
+clasp push
